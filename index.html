@@ -87,7 +87,7 @@
   <ul>
     <li><span class="highlight">No Lost-in-the-Middle.</span> Both models show <strong>100% recall at positions 0.00–0.90</strong> across all tested lengths.</li>
     <li><span class="highlight">Systematic failure at position 1.00.</span> When the needle is placed immediately before the question, recall drops to 0% in <strong>87.5% of cases</strong> (7/8 for V4 Pro, 5/6 for Chat).</li>
-    <li><span class="highlight">Recovery at 64K+.</span> At 65,536 tokens and above, the boundary bias disappears — KV-cache saturation redistributes attention weights, paradoxically <em>fixing</em> the blind spot.</li>
+    <li><span class="highlight">Recovery at 64K+.</span> At 65,536 tokens and above, the boundary bias closes. Our hypothesis: RoPE (Rotary Position Embedding) scaling factors or long-context fine-tuning boundaries alter the attention distribution at extreme distances, overriding the local token masking effect.</li>
     <li><span class="highlight">Architectural, not reasoning-related.</span> The non-reasoning Chat model exhibits the <strong>identical</strong> failure pattern. This is a structural property of the transformer decoder, not a side effect of chain-of-thought tokens.</li>
   </ul>
 </div>
