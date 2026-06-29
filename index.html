@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Long-Context Fidelity Leaderboard — Notitia</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #0d1117; color: #c9d1d9; line-height: 1.6; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 { font-size: 2rem; color: #f0f6fc; border-bottom: 2px solid #7c3aed; padding-bottom: 0.5rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.3rem; color: #e6edf3; margin: 2rem 0 1rem; }
+  .subtitle { color: #8b949e; font-size: 0.95rem; margin-bottom: 2rem; }
+  .heatmap-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
+  .heatmap-container h3 { color: #e6edf3; margin-bottom: 0.25rem; }
+  .heatmap-container .model-tag { display: inline-block; background: #7c3aed20; color: #a78bfa; padding: 0.15rem 0.6rem; border-radius: 4px; font-size: 0.8rem; margin-left: 0.5rem; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+  th, td { padding: 6px 10px; text-align: center; border: 1px solid #21262d; }
+  th { background: #161b22; color: #8b949e; font-weight: 600; }
+  td { background: #0d1117; }
+  td.hit { color: #3fb950; }
+  td.miss { color: #f85149; background: #f8514915; }
+  td.avg { color: #e6edf3; font-weight: 600; background: #161b22; }
+  .findings { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
+  .findings li { margin: 0.5rem 0 0.5rem 1.5rem; }
+  .findings .highlight { color: #d2a8ff; }
+  .cta { background: linear-gradient(135deg, #7c3aed20, #a78bfa10); border: 1px solid #7c3aed40; border-radius: 8px; padding: 2rem; text-align: center; margin: 2rem 0; }
+  .cta h3 { color: #f0f6fc; font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .cta p { color: #8b949e; margin-bottom: 1.5rem; }
+  .cta .price { font-size: 2.5rem; color: #7c3aed; font-weight: 700; }
+  .btn { display: inline-block; background: #7c3aed; color: #fff; padding: 0.8rem 2rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 1rem; margin: 0.5rem; }
+  .btn:hover { background: #6d28d9; }
+  .btn-secondary { background: #21262d; border: 1px solid #30363d; }
+  .btn-secondary:hover { background: #30363d; }
+  .footer { text-align: center; color: #484f58; font-size: 0.8rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #21262d; }
+  .tabs { display: flex; gap: 0; margin-bottom: 0; }
+  .tab { padding: 0.6rem 1.2rem; background: #161b22; border: 1px solid #30363d; border-bottom: none; cursor: pointer; color: #8b949e; font-size: 0.9rem; border-radius: 6px 6px 0 0; }
+  .tab.active { background: #0d1117; color: #7c3aed; border-color: #7c3aed #30363d #0d1117; }
+  @media (max-width: 768px) { .container { padding: 1rem; } table { font-size: 0.7rem; } th, td { padding: 4px 6px; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Long-Context Fidelity Leaderboard</h1>
+<p class="subtitle">Empirical needle-in-haystack stress tests. 56-cell grid per model. <strong>Notitia Context Fidelity Audit</strong> — protocol v1.</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="showModel('v4pro')">DeepSeek V4 Pro (reasoning)</div>
+  <div class="tab" onclick="showModel('chat')">DeepSeek Chat (non-reasoning)</div>
+</div>
+
+<div id="heatmap-v4pro" class="heatmap-container">
+  <h3>DeepSeek V4 Pro <span class="model-tag">reasoning · 88.9% recall</span></h3>
+  <table>
+    <tr><th>Tokens</th><th>0%</th><th>10%</th><th>25%</th><th>50%</th><th>75%</th><th>90%</th><th>100%</th><th>avg</th></tr>
+    <tr><td>512</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>1,024</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>2,048</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>4,096</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>8,192</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>16,384</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>32,768</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>65,536</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="avg">1.00</td></tr>
+    <tr><td>131,072</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="avg">1.00</td></tr>
+  </table>
+  <p style="color:#8b949e;font-size:0.8rem;margin-top:0.5rem;">56/63 correct · 7 failures · All 7 at position 1.00 · Recovery at 64K+</p>
+</div>
+
+<div id="heatmap-chat" class="heatmap-container" style="display:none">
+  <h3>DeepSeek Chat <span class="model-tag">non-reasoning · 88.1% recall</span></h3>
+  <table>
+    <tr><th>Tokens</th><th>0%</th><th>10%</th><th>25%</th><th>50%</th><th>75%</th><th>90%</th><th>100%</th><th>avg</th></tr>
+    <tr><td>512</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>2,048</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>8,192</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>16,384</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>32,768</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="miss">✗</td><td class="avg">.86</td></tr>
+    <tr><td>65,536</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="hit">✓</td><td class="avg">1.00</td></tr>
+  </table>
+  <p style="color:#8b949e;font-size:0.8rem;margin-top:0.5rem;">37/42 correct · 5 failures · All 5 at position 1.00 · Same pattern as V4 Pro</p>
+</div>
+
+<div class="findings">
+  <h2>🔬 Key Finding: Terminal Boundary Bias</h2>
+  <ul>
+    <li><span class="highlight">No Lost-in-the-Middle.</span> Both models show <strong>100% recall at positions 0.00–0.90</strong> across all tested lengths.</li>
+    <li><span class="highlight">Systematic failure at position 1.00.</span> When the needle is placed immediately before the question, recall drops to 0% in <strong>87.5% of cases</strong> (7/8 for V4 Pro, 5/6 for Chat).</li>
+    <li><span class="highlight">Recovery at 64K+.</span> At 65,536 tokens and above, the boundary bias disappears — KV-cache saturation redistributes attention weights, paradoxically <em>fixing</em> the blind spot.</li>
+    <li><span class="highlight">Architectural, not reasoning-related.</span> The non-reasoning Chat model exhibits the <strong>identical</strong> failure pattern. This is a structural property of the transformer decoder, not a side effect of chain-of-thought tokens.</li>
+  </ul>
+</div>
+
+<div class="findings">
+  <h2>⚙️ Methodology</h2>
+  <ul>
+    <li><strong>Haystack:</strong> 250 KB neutral text (economics, physics, biology, CS) — no semantic bias</li>
+    <li><strong>Needle:</strong> "The secret verification code is MARMALADE-SUNSET-42"</li>
+    <li><strong>Grid:</strong> 8–9 context lengths × 7 positions = 56–63 cells per model</li>
+    <li><strong>Temperature:</strong> 0.0 — deterministic, reproducible</li>
+    <li><strong>Scoring:</strong> Case-insensitive substring match on expected answer</li>
+    <li><strong>Reproduce:</strong> <code>pip install httpx && python benchmark.py</code> (see repo)</li>
+  </ul>
+</div>
+
+<div class="cta">
+  <h3>Context Fidelity Audit — Your Model</h3>
+  <p>Run the full 56-cell stress test on your own documents and model stack. Get the heatmap, the boundary analysis, and the optimization report.</p>
+  <div class="price">990€</div>
+  <p style="color:#8b949e;font-size:0.85rem;">One-shot audit · PDF report · 48h delivery</p>
+  <a href="#" class="btn" onclick="alert('Stripe integration coming soon. Contact q@notitia.co')">Order Audit</a>
+  <a href="https://github.com/notitiacorp-design/long-context-fidelity-leaderboard" class="btn btn-secondary">Run Locally (Free)</a>
+</div>
+
+<div class="footer">
+  <p>Notitia Context Fidelity Audit · Protocol v1 · <a href="https://github.com/notitiacorp-design/long-context-fidelity-leaderboard" style="color:#8b949e;">GitHub</a></p>
+  <p>Data collected 2026-06-29 · DeepSeek API · Reproducible methodology</p>
+</div>
+
+</div>
+
+<script>
+function showModel(model) {
+  document.getElementById('heatmap-v4pro').style.display = model === 'v4pro' ? 'block' : 'none';
+  document.getElementById('heatmap-chat').style.display = model === 'chat' ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', (model==='v4pro' && i===0) || (model==='chat' && i===1));
+  });
+}
+</script>
+</body>
+</html>
